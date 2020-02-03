@@ -1,0 +1,11 @@
+#!/bin/bash
+
+baseFolder="`pwd`"
+foldersList=(`ls ./`)
+for f in ${foldersList[@]}; do
+    address="$baseFolder/$f"
+    if [ ! -z "`ls -la \"$address\" | grep \"^d\"`" ]; then
+        cd "$address"
+        "$@"
+    fi
+done

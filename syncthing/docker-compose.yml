@@ -1,0 +1,15 @@
+version: "3.4"
+
+services:
+  syncthing:
+    image: linuxserver/syncthing
+    container_name: syncthing
+    restart: always
+    volumes:
+      - "${DATA_PATH}/syncthing/config:/config"
+      - "${DATA_PATH}/syncthing/data1:/data1"
+      - "${DATA1_PATH}/syncthing/data2:/data2"
+    ports:
+      - "127.0.0.1:8880:8384"
+      - "22000:22000"
+      - "21027:21027"

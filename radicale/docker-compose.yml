@@ -1,0 +1,12 @@
+version: "3.4"
+
+services:
+  radicale:
+    image: tomsquest/docker-radicale
+    container_name: radicale
+    restart: always
+    volumes:
+      - "${DATA_PATH}/radicale/config:/config:ro"
+      - "${DATA_PATH}/radicale/data:/data"
+    ports:
+      - "8882:5232"

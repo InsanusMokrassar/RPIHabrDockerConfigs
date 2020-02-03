@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./doForAll docker-compose pull
+./doForAll docker-compose build
+./doForAll docker-compose up -d

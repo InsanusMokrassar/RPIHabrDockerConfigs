@@ -1,0 +1,12 @@
+version: "3.4"
+
+services:
+  jenkins:
+    image: jenkins4eval/jenkins
+    container_name: jenkins
+    restart: always
+    volumes:
+      - "${DATA_PATH}/jenkins:/var/jenkins_home"
+    ports:
+      - "127.0.0.1:8884:8080"
+      - "127.0.0.1:50000:50000"

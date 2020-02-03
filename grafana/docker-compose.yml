@@ -1,0 +1,58 @@
+version: "3.4"
+
+services:
+  influxdb-init:
+    image: influxdb
+    container_name: influxdb-init
+    volumes:
+      - "${CONFIGS_PATH}/influxdb.conf:/etc/influxdb/influxdb.conf:ro"
+      - "${DATA_PATH}/influxdb:/var/lib/influxdb"
+    entrypoint:
+      - "/init-influxdb.sh"
+    environment:
+      - "INFLUXDB_DB=$INFLUXDB_DB"
+      - "INFLUXDB_WRITE_USER=$INFLUXDB_WRITE_USER"
+      - "INFLUXDB_WRITE_USER_PASSWORD=$INFLUXDB_WRITE_USER_PASSWORD"
+      - "INFLUXDB_READ_USER=$INFLUXDB_READ_USER"
+      - "INFLUXDB_READ_USER_PASSWORD=$INFLUXDB_READ_USER_PASSWORD"
+
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    restart: always
+    ports:
+      - 127.0.0.1:8086:8086
+      # - 8083:8083 # ADMINISTRATOR PORT
+    volumes:
+      - "${CONFIGS_PATH}/influxdb.conf:/etc/influxdb/influxdb.conf:ro"
+      - "${DATA_PATH}/influxdb:/var/lib/influxdb"
+    entrypoint:
+      - "/entrypoint.sh"
+      - "-config"
+      - "/etc/influxdb/influxdb.conf"
+    depends_on:
+      - influxdb-init
+
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+    restart: always
+    network_mode: "service:influxdb"
+    volumes:
+      - "/:/hostfs:ro"
+      - "${CONFIGS_PATH}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/root/services/cpugpu/data:/host/temperature"
+    environment:
+      HOST_PROC: /hostfs/proc
+      HOST_MOUNT_PREFIX: /hostfs
+
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: always
+    network_mode: host
+    volumes:
+      - "${DATA_PATH}/grafana-data:/var/lib/grafana"
+
